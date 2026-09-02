@@ -41,7 +41,7 @@ const backdrop = document.getElementById('backdrop');
 const piecesLayer = document.getElementById('piecesLayer');
 const tray = document.getElementById('tray');
 const correctCountEl = document.getElementById('correctCount');
-const timerEl = document.getElementById('timer');
+const timerEl = document.getElementById('timer') || null;
 const winEl = document.getElementById('win');
 
 boardWrap.style.width = (BOARD + 2 * PAD) + 'px';
@@ -178,7 +178,7 @@ function shuffle() {
   }
   selected = null;
   seconds = 0;
-  timerEl.textContent = '00:00';
+  if (timerEl) timerEl.textContent = '00:00';
   stopTimer();
   started = false;
   winEl.style.display = 'none';
@@ -189,14 +189,15 @@ function shuffle() {
 
 function startTimer() {
   started = true;
+  if (timerInterval) return;
   timerInterval = setInterval(() => {
     seconds++;
     const m = String(Math.floor(seconds/60)).padStart(2,'0');
     const s = String(seconds%60).padStart(2,'0');
-    timerEl.textContent = m + ':' + s;
+    if (timerEl) timerEl.textContent = m + ':' + s;
   }, 1000);
 }
-function stopTimer() { clearInterval(timerInterval); }
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
 function renderTray() {
   tray.innerHTML = '';
