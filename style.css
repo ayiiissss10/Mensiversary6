@@ -1,346 +1,109 @@
+/* style.css */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #2d2a26 0%, #5c4a3d 100%);
-    color: #f5f0e8;
-    padding: 16px 12px 32px;
-  }
-  h1 { font-size: 1.3rem; margin: 4px 0 2px 0; text-align: center; }
-  .subtitle { opacity: 0.75; font-size: 0.8rem; margin-bottom: 12px; text-align: center; }
-  .stats { display: flex; gap: 20px; margin-bottom: 14px; font-size: 0.9rem; }
-  .stats span b { color: #f0c987; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg,#2d2a26 0%,#5c4a3d 100%);
+  color: #f5f0e8;
+  padding: 16px 12px 32px;
+}
 
-  #boardWrap {
-    position: relative;
-    margin: 0 auto 18px;
-    width: min(92vw, 420px);   
-    Display: flex;
-    justify-content: center; 
-  }
-  #backdrop {
-    position: absolute;
-    background: #1a1714;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.08);
-    background-image:
-      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-  }
-  #piecesLayer {
-    position: absolute;
-    top: 0; left: 0;
-    pointer-events: none;
-  }
-  .board-piece { position: absolute; pointer-events: none; }
-  .board-piece path.outline {
-    fill: none;
-    stroke: rgba(0,0,0,0.35);
-    stroke-width: 1.2;
-  }
-  .flash {
-    position: absolute;
-    border-radius: 4px;
-    background: rgba(230,90,80,0.45);
-    pointer-events: none;
-    animation: flashOut 0.45s ease forwards;
-  }
-  @keyframes flashOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-  }
+h1 { font-size: 1.3rem; margin: 6px 0; text-align:center; }
+.subtitle { opacity: .8; font-size: .95rem; margin-bottom: 12px; text-align:center; }
 
-  #trayWrap { width: min(96vw, 560px); }
-  .tray-label { font-size: 0.78rem; opacity: 0.65; margin-bottom: 6px; }
-  #tray {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    background: rgba(0,0,0,0.2);
-    padding: 10px;
-    border-radius: 8px;
-    min-height: 40px;
-    justify-content: center;
-  }
-  .tray-piece {
-    cursor: pointer;
-    transition: transform 0.1s;
-  }
-  .tray-piece:active { transform: scale(0.92); }
-  .tray-piece.selected {
-    filter: drop-shadow(0 0 0 2px #f0c987) drop-shadow(0 0 6px rgba(240,201,135,0.8));
-    transform: scale(1.08);
-  }
-  .tray-piece path.outline {
-    fill: none;
-    stroke: rgba(0,0,0,0.35);
-    stroke-width: 1.2;
-  }
+.stats { display:flex; gap:18px; margin-bottom:12px; font-size:.95rem; justify-content:center; }
 
-  .controls { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  button {
-    background: #f0c987; color: #2d2a26; border: none;
-    padding: 10px 18px; border-radius: 8px; font-size: 0.85rem;
-    font-weight: 600; cursor: pointer;
-  }
-  button.secondary { background: transparent; color: #f5f0e8; border: 1px solid rgba(245,240,232,0.4); }
-  button:active { transform: scale(0.96); }
+#boardWrap {
+  position: relative;
+  margin: 0 auto 18px;
+  width: min(92vw, 560px);
+  max-width: 560px;
+  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  min-height: 1px;
+}
 
-  #win { display: none; margin-top: 14px; font-size: 1.05rem; color: #a3e6a1; font-weight: 600; text-align: center; }
+#backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #1a1714;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+  pointer-events: auto;
+}
 
-  /* ---- Surat (scroll unroll) ---- */
-  #letterSection { display: none; margin-top: 22px; width: min(94vw, 480px); text-align: center; }
-  #openLetterBtn {
-    background: linear-gradient(180deg, #c9a876, #a9803f);
-    color: #3a2a15;
-    border: 1px solid rgba(0,0,0,0.25);
-    padding: 12px 26px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-  }
-  #openLetterBtn:active { transform: scale(0.97); }
-  #scrollWrap { display: none; margin: 18px auto 0; width: 100%; }
-  .rod {
-    height: 16px;
-    border-radius: 9px;
-    background: linear-gradient(90deg, #4a3320 0%, #7a5330 15%, #9c7040 50%, #7a5330 85%, #4a3320 100%);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.25);
-    position: relative;
-    z-index: 2;
-  }
-  .rod::before, .rod::after {
-    content: '';
-    position: absolute;
-    top: -3px;
-    width: 10px;
-    height: 22px;
-    border-radius: 5px;
-    background: linear-gradient(90deg, #3a2818, #6b4a2c);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-  }
-  .rod::before { left: -6px; }
-  .rod::after { right: -6px; }
-  #paper {
-    overflow: hidden;
-    height: 0;
-    background: linear-gradient(180deg, #f2e4c6, #e9d7ae 60%, #f2e4c6);
-    box-shadow: inset 0 0 40px rgba(120,85,45,0.25), 0 0 12px rgba(0,0,0,0.3);
-    transition: height 1.3s cubic-bezier(.22,1,.36,1);
-    border-left: 1px solid rgba(90,60,25,0.2);
-    border-right: 1px solid rgba(90,60,25,0.2);
-  }
-  #paperInner {
-    padding: 26px 22px;
-    font-family: Georgia, 'Times New Roman', serif;
-    color: #4a3319;
-    text-align: left;
-    white-space: pre-line;
-    line-height: 1.7;
-    font-size: 0.95rem;
-  }
-  #paperInner .signature {
-    margin-top: 18px;
-    font-style: italic;
-    opacity: 0.85;
-  }
-  #preview {
-    display: block;
-    margin: 16px auto 0;
-    width: min(380px, 92vw) !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 16px;
-    background-image: url('img/foto.jpg');
-    background-size: cover;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 2px solid rgba(245,240,232,0.3);
-  }
-  .preview-label { font-size: 0.72rem; opacity: 0.6; margin-top: 6px; }
+#piecesLayer {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 10;
+}
 
-  /* ===== Mobile / HP responsive ===== */
-  html { -webkit-text-size-adjust: 100%; }
-  body { overflow-x: hidden; }
+.board-piece { position: absolute; pointer-events: none; z-index: 11; }
 
-  @media (max-width: 600px) {
-    body {
-      padding: 12px 8px 24px;
-    }
+#trayWrap { width: min(96vw, 560px); margin: 8px auto; }
+.tray-label { font-size: 0.82rem; opacity: 0.75; margin-bottom:6px; text-align:left; padding-left:6px; }
+#tray {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  background: rgba(0,0,0,0.16);
+  padding:16px;
+  border-radius:8px;
+  min-height:60px;
+  justify-content:flex-start;
+}
 
-    h1 {
-      font-size: clamp(1.08rem, 5vw, 1.3rem);
-      line-height: 1.25;
-      margin-top: 2px;
-    }
+.tray-piece { cursor:pointer; transition: transform .12s; }
+.tray-piece.selected { transform: scale(1.06); filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5)); }
 
-    .subtitle {
-      font-size: 0.75rem;
-      line-height: 1.35;
-      margin-bottom: 10px;
-      padding: 0 8px;
-    }
+.controls { margin-top: 12px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+button {
+  background:#f0c987; color:#2d2a26; border:none;
+  padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer;
+}
+button.secondary { background:transparent; color:#f5f0e8; border:1px solid rgba(255,255,255,0.08); }
 
-    .stats {
-      width: 100%;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-      font-size: 0.82rem;
-    }
+#win { margin-top:14px; font-size:1.05rem; color:#a3e6a1; font-weight:600; text-align:center; }
 
-    #boardWrap {
-      width: min(94vw, 420px);
-      max-width: 100%;
-      margin-bottom: 14px;
-      touch-action: manipulation;
-    }
+/* paper (letter) */
+#paper { overflow:hidden; height:0; background: linear-gradient(180deg,#f2e4c6,#e9d7ae 60%,#f2e4c6); transition:height 1.2s cubic-bezier(.22,1,.36,1); border-left:1px solid rgba(90,60,25,0.2); border-right:1px solid rgba(90,60,25,0.2); margin:12px auto; max-width:94vw; }
+#paperInner { padding:26px 22px; font-family: Georgia, 'Times New Roman', serif; color:#4a3319; white-space: pre-line; line-height:1.6; font-size:0.95rem; }
+.rod { height:16px; border-radius:9px; background: linear-gradient(90deg,#4a3320 0%,#7a5330 15%,#9c7040 50%); box-shadow: 0 3px 8px rgba(0,0,0,0.45); margin:8px auto; width: min(80vw, 420px); }
 
-    #backdrop,
-    #piecesLayer {
-      max-width: 100%;
-    }
+/* helper for flash wrong */
+.flash { position:absolute; border-radius:4px; background: rgba(230,90,80,0.45); animation: flashOut .45s ease forwards; pointer-events:none; }
+@keyframes flashOut { to { opacity:0; } }
 
-    #trayWrap {
-      width: min(96vw, 420px);
-      max-width: 100%;
-    }
+#preview { display:block; margin:8px auto; width:min(260px,78vw); height:auto; border-radius:12px; }
 
-    #tray {
-      gap: 5px;
-      padding: 8px;
-      min-height: 36px;
-    }
+/* VISUAL SLOT FOR DROPPING PIECES */
+#backdrop { position: absolute; overflow: visible; }
+.backdrop-slot {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 6px;
+  pointer-events: auto;
+  background: rgba(255,255,255,0.01);
+  transition: background .12s, transform .08s;
+  z-index: 5;
+}
+.backdrop-slot:hover {
+  background: rgba(255,255,255,0.03);
+  transform: translateY(-2px);
+}
+.backdrop-slot.empty {
+  border: 1px dashed rgba(255,255,255,0.03);
+}
 
-    .controls {
-      width: min(96vw, 420px);
-      margin-top: 14px;
-      gap: 8px;
-    }
-
-    button {
-      min-height: 44px;
-      padding: 10px 14px;
-      font-size: 0.82rem;
-      flex: 1 1 auto;
-    }
-
-    #win {
-      width: 94vw;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    #letterSection {
-      width: min(94vw, 420px);
-      max-width: 100%;
-      margin-top: 18px;
-    }
-
-    #openLetterBtn {
-      width: 100%;
-      min-height: 46px;
-      padding: 12px 16px;
-      font-size: 0.9rem;
-    }
-
-    #scrollWrap {
-      width: 100%;
-      margin-top: 14px;
-    }
-
-    .rod {
-      height: 13px;
-    }
-
-    .rod::before,
-    .rod::after {
-      width: 9px;
-      height: 19px;
-    }
-
-    #paperInner {
-      padding: 20px 16px;
-      font-size: 0.9rem;
-      line-height: 1.65;
-      overflow-wrap: anywhere;
-    }
-
-    #preview {
-      width: min(72vw, 240px) !important;
-      max-width: 100%;
-      margin-top: 14px;
-    }
-  }
-
-  @media (max-width: 380px) {
-    body { padding-left: 6px; padding-right: 6px; }
-
-    .stats {
-      gap: 10px;
-      font-size: 0.78rem;
-    }
-
-    #tray {
-      gap: 4px;
-      padding: 6px;
-    }
-
-    .controls {
-      flex-direction: column;
-    }
-
-    button {
-      width: 100%;
-      flex: none;
-    }
-
-    #paperInner {
-      padding: 18px 13px;
-      font-size: 0.86rem;
-      line-height: 1.6;
-    }
-
-    #preview {
-      width: min(68vw, 210px) !important;
-    }
-  }
-
-
-  /* ===== Perbaikan posisi puzzle agar benar-benar di tengah HP ===== */
-  #boardWrap {
-    left: auto !important;
-    right: auto !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-
-  @media (max-width: 600px) {
-    #boardWrap {
-      position: relative !important;
-      display: block !important;
-      width: min(94vw, 420px) !important;
-      max-width: calc(100vw - 16px) !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-      transform: none !important;
-    }
-
-    #backdrop,
-    #piecesLayer {
-      left: 0 !important;
-    }
-  }
-
-  @media (max-width: 380px) {
-    #boardWrap {
-      width: calc(100vw - 12px) !important;
-      max-width: calc(100vw - 12px) !important;
-    }
-  }
+/* small responsive tweaks */
+@media (max-width: 420px) {
+  #tray { gap:8px; padding:12px; }
+  button { padding:8px 12px; font-size:0.95rem; }
+}
