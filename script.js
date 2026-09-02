@@ -1,11 +1,12 @@
+// script.js - patched + includes your LETTER_TEXT
 const SIZE = 6;
 const TOTAL = SIZE * SIZE;
+
 const BOARD = Math.min(window.innerWidth * 0.96, 650);
 const CELL = BOARD / SIZE;
 const PAD = CELL * 0.35;
 const VB = CELL + 2 * PAD; // viewBox size per piece
-const img = new Image();
-img.src = 'img/foto.jpg';
+
 // Ganti teks di bawah ini dengan surat aslimu.
 // Baris baru (Enter) akan otomatis tampil sebagai paragraf baru.
 const LETTER_TEXT = `Hai kesayanganku, selamat tanggal 3 yang ke-enam ya cantikk.
@@ -34,8 +35,8 @@ Terima kasih udah membawa kebahagiaan buat aku sayang, bahkan lewat hal hal keci
 
 aku sayang banget sama kamu anak kecilku.
 I love you, i love u more than u know, i love u more than I know how to say 🤍`;
-// ====================================
 
+// ====================================
 const boardWrap = document.getElementById('boardWrap');
 const backdrop = document.getElementById('backdrop');
 const piecesLayer = document.getElementById('piecesLayer');
@@ -43,16 +44,6 @@ const tray = document.getElementById('tray');
 const correctCountEl = document.getElementById('correctCount');
 const timerEl = document.getElementById('timer') || null;
 const winEl = document.getElementById('win');
-
-boardWrap.style.width = (BOARD + 2 * PAD) + 'px';
-boardWrap.style.height = (BOARD + 2 * PAD) + 'px';
-backdrop.style.left = PAD + 'px';
-backdrop.style.top = PAD + 'px';
-backdrop.style.width = BOARD + 'px';
-backdrop.style.height = BOARD + 'px';
-backdrop.style.backgroundSize = CELL + 'px ' + CELL + 'px';
-piecesLayer.style.width = (BOARD + 2 * PAD) + 'px';
-piecesLayer.style.height = (BOARD + 2 * PAD) + 'px';
 
 let topSign = [], rightSign = [], bottomSign = [], leftSign = []; // [row][col]
 let slots = [];
@@ -63,20 +54,19 @@ let seconds = 0, timerInterval = null, started = false;
 function rnd() { return Math.random() < 0.5 ? -1 : 1; }
 
 function generateSigns() {
-  // horizontal shared edges (between row r and r+1, same col c): SIZE-1 rows x SIZE cols
   const edgeH = [];
   for (let r = 0; r < SIZE - 1; r++) {
     const row = [];
     for (let c = 0; c < SIZE; c++) row.push(rnd());
     edgeH.push(row);
   }
-  // vertical shared edges (between col c and c+1, same row r): SIZE rows x SIZE-1 cols
   const edgeV = [];
   for (let r = 0; r < SIZE; r++) {
     const row = [];
     for (let c = 0; c < SIZE - 1; c++) row.push(rnd());
     edgeV.push(row);
   }
+
   topSign = []; bottomSign = []; leftSign = []; rightSign = [];
   for (let r = 0; r < SIZE; r++) {
     topSign.push([]); bottomSign.push([]); leftSign.push([]); rightSign.push([]);
@@ -148,16 +138,30 @@ function makePieceSVG(value, sizePx) {
   defs.appendChild(clip);
   svg.appendChild(defs);
 
-  const img = document.createElementNS(svgNS, 'image');
-  img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'data:image/jpeg;base64,' + IMG_B64);
-  img.setAttribute('href', 'data:image/jpeg;base64,' + IMG_B64);
-  img.setAttribute('x', (PAD - c * CELL).toFixed(2));
-  img.setAttribute('y', (PAD - r * CELL).toFixed(2));
-  img.setAttribute('width', BOARD);
-  img.setAttribute('height', BOARD);
-  img.setAttribute('clip-path', 'url(#' + clipId + ')');
-  img.setAttribute('preserveAspectRatio', 'none');
-  svg.appendChild(img);
+  // image source fallback: prefer IMG_B64, then preview img src, then img/foto.jpg
+  let sourceSrc = null;
+  try {
+    if (typeof IMG_B64 !== 'undefined' && IMG_B64) {
+      sourceSrc = 'data:image/jpeg;base64,' + IMG_B64;
+    } else if (document.getElementById('preview') && document.getElementById('preview').src) {
+      sourceSrc = document.getElementById('preview').src;
+    } else {
+      sourceSrc = 'img/foto.jpg';
+    }
+  } catch (e) {
+    sourceSrc = 'img/foto.jpg';
+  }
+
+  const imgEl = document.createElementNS(svgNS, 'image');
+  imgEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', sourceSrc);
+  imgEl.setAttribute('href', sourceSrc);
+  imgEl.setAttribute('x', (PAD - c * CELL).toFixed(2));
+  imgEl.setAttribute('y', (PAD - r * CELL).toFixed(2));
+  imgEl.setAttribute('width', BOARD);
+  imgEl.setAttribute('height', BOARD);
+  imgEl.setAttribute('clip-path', 'url(#' + clipId + ')');
+  imgEl.setAttribute('preserveAspectRatio', 'none');
+  svg.appendChild(imgEl);
 
   const outline = document.createElementNS(svgNS, 'path');
   outline.setAttribute('d', d);
@@ -181,15 +185,15 @@ function shuffle() {
   if (timerEl) timerEl.textContent = '00:00';
   stopTimer();
   started = false;
-  winEl.style.display = 'none';
+  if (winEl) winEl.style.display = 'none';
   renderTray();
   renderBoard();
   updateStats();
 }
 
 function startTimer() {
-  started = true;
   if (timerInterval) return;
+  started = true;
   timerInterval = setInterval(() => {
     seconds++;
     const m = String(Math.floor(seconds/60)).padStart(2,'0');
@@ -227,11 +231,14 @@ function renderBoard() {
 
 function updateStats() {
   const correct = slots.filter(v => v !== null).length;
-  correctCountEl.textContent = correct;
+  if (correctCountEl) correctCountEl.textContent = correct;
   if (correct === TOTAL) {
-    winEl.style.display = 'block';
+    if (winEl) winEl.style.display = 'block';
     stopTimer();
-    document.getElementById('letterSection').style.display = 'block';
+    const letterSection = document.getElementById('letterSection');
+    if (letterSection) letterSection.style.display = 'block';
+  } else {
+    if (winEl) winEl.style.display = 'none';
   }
 }
 
@@ -242,11 +249,13 @@ document.getElementById('openLetterBtn').addEventListener('click', () => {
   const scrollWrap = document.getElementById('scrollWrap');
   const paper = document.getElementById('paper');
   btn.style.display = 'none';
-  scrollWrap.style.display = 'block';
-  const targetHeight = document.getElementById('paperInner').scrollHeight;
-  requestAnimationFrame(() => {
-    paper.style.height = targetHeight + 'px';
-  });
+  if (scrollWrap) scrollWrap.style.display = 'block';
+  if (paper) {
+    const targetHeight = document.getElementById('paperInner').scrollHeight;
+    requestAnimationFrame(() => {
+      paper.style.height = targetHeight + 'px';
+    });
+  }
 });
 
 function onTrayClick(idx) {
@@ -281,6 +290,7 @@ backdrop.addEventListener('click', (e) => {
     flashWrong(r, c);
     return;
   }
+
   const pieceValue = trayOrder[selected];
   if (pieceValue === idx) {
     // correct!
@@ -291,7 +301,7 @@ backdrop.addEventListener('click', (e) => {
     renderBoard();
     updateStats();
   } else {
-    // wrong: kembalikan ke tempatnya (tetap di tray)
+    // wrong
     flashWrong(r, c);
     selected = null;
     renderTray();
@@ -305,8 +315,8 @@ document.getElementById('previewBtn').addEventListener('click', () => {
   const img = document.getElementById('preview');
   const label = document.getElementById('previewLabel');
   previewShown = !previewShown;
-  img.style.display = previewShown ? 'block' : 'none';
-  label.style.display = previewShown ? 'block' : 'none';
+  if (img) img.style.display = previewShown ? 'block' : 'none';
+  if (label) label.style.display = previewShown ? 'block' : 'none';
 });
 
 shuffle();
