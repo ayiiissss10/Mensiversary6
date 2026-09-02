@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensiversary 6</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🧩 Puzzle</h1>
+  <div class="subtitle">Ketuk kepingan, lalu ketuk kotak tujuan.</div>
+  <div class="stats">
+    <span>Terpasang benar: <b id="correctCount">0</b>/36</span>
+  </div>
+  <div id="boardWrap">
+    <div id="backdrop"></div>
+    <div id="piecesLayer"></div>
+  </div>
+  <div id="win">🎉 Selesai! Semua kepingan sudah pas!</div>
+
+  <div id="letterSection">
+    <button id="openLetterBtn">📜 Buka Surat</button>
+    <div id="scrollWrap">
+      <div class="rod"></div>
+      <div id="paper"><div id="paperInner"></div></div>
+      <div class="rod"></div>
+    </div>
+  </div>
+
+  <div id="trayWrap">
+    <div class="tray-label">Kepingan tersisa:</div>
+    <div id="tray"></div>
+  </div>
+  <div class="controls">
+    <button id="shuffleBtn">Acak Ulang</button>
+    <button id="previewBtn" class="secondary">Lihat Contoh</button>
+  </div>
+  <img id="preview" style="display:none;" />
+  <div class="preview-label" id="previewLabel" style="display:none;">Gambar aslinya</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
